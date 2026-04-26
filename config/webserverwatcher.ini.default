@@ -1,0 +1,27 @@
+; webserverwatcher.ini.example
+
+[general]
+debug = 0
+
+[log]
+; This is the log file will be monitored for activity.
+;logfile = "test/webserverwatcher.log"
+;logfile = "/var/log/nginx/access.log"
+;logfile = "/var/log/apache2/access.log"
+; Note: This currently only works with a single standard nginx or apache2 combined web
+; log file.
+
+[time]
+; Seconds since a 200 code to restart the web service.
+WINDOW_SECONDS = 4
+
+; Seconds to wait after restart.
+WAIT_SECONDS = 5
+
+[systemd]
+; Enter the service that needs to be restarted when the 200 window is not met.
+;   systemctl restart <webservice>
+webservice = "nginx"
+
+; Enter the path for systemctl.
+systemctl_path = "/bin/systemctl"
