@@ -29,7 +29,8 @@ minutes.
 ### Method 2: Uptime checks
 
 A recurring service can make the equivalence of `curl` requests to the server
-and send a restart command when the requests fail after a given period of time.
+to check on the health of the service. If the requests fail, a restart command
+can be sent after a given period of time.
 
 The uptime check method is slower than the WebServiceWatcher method because
 even when making requests from the localhost, you have to wait for timeouts and
@@ -38,12 +39,13 @@ build a pattern over time. The uptime check method usually takes minutes.
 ### Method 3: Bash loop
 
 If a sysadmin knows that something is wrong with a server, they can continually
-kick it back to life with a hacky bash loop like this:
+kick it back to life with a hacky bash loop in a `tmux` session like this:
 
 `while true; do systemctl restart apache2; sleep 40; date; done`
 
-This hacky method technically will keep the server somewhat alive with some
-downtime while the service restarts until the root of the problem can be found.
+This hacky method technically will keep the server somewhat alive until a
+proper solution can be found. The downside to this is that there will be some
+downtime at least while the service restarts even if the problem has gone away.
 
 The WebServiceWatcher method is more responsive because the load might
 externally rise or drop and a manually set time span does not account for what
