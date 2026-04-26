@@ -5,6 +5,11 @@ Keep an eye out for successful web requests.
 This project is a work-in-progress (WIP), but it is close enough to working
 that it is now worth sharing.
 
+This project is a partial improvement for system administrators and pairs well
+with several of my other projects such as
+[LogReview](https://github.com/TechnologyClassroom/LogReview) and
+[FirewallBlockGen](https://github.com/TechnologyClassroom/firewallblockgen/).
+
 ## Trying out WebServerWatcher
 
 WebServiceWatcher is still a work-in-progress so bear with these instructions.
