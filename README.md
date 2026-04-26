@@ -5,6 +5,31 @@ Keep an eye out for successful web requests.
 This project is a work-in-progress (WIP), but it is close enough to working
 that it is now worth sharing.
 
+## Trying out WebServerWatcher
+
+WebServiceWatcher is still a work-in-progress so bear with these instructions.
+Contributions are welcome.
+
+Clone the repository.
+
+    git clone https://github.com/TechnologyClassroom/webserverwatcher
+
+Change to the directory.
+
+    cd webserverwatcher
+
+Copy the configuration file.
+
+    cp config/webserverwatcher.ini.default config/webserverwatcher.ini
+
+Edit the configuration file to at least point to your web server log file.
+
+Run the program as root. Note: This script is not long. Read the thing before
+you run it in production. (I am leaving this note until the software becomes
+more polished and battle-tested.)
+
+    sudo python3 webserverwatcher.py
+
 ## Background
 
 Concept: A reasonably popular, public-facing web server should have a constant
