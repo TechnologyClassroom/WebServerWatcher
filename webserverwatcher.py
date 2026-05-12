@@ -2,7 +2,7 @@
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
-# WebServerWatcher v2026.04.26
+# WebServerWatcher v2026.05.12
 
 # Copyright (C) 2026 Michael McMahon
 #
@@ -119,11 +119,11 @@ def process_log_time(line):
         #         03/Apr/2026:16:44:19
         try:
             dt = datetime.strptime(timestamp_str, "%d/%b/%Y:%H:%M:%S")
-            if debug == 1:
-                print(dt)
+            if debug > 1:
+                print(f"Last 200 time: {dt}")
             ts_sec = dt.timestamp()
-            if debug == 1:
-                print(ts_sec)
+            if debug > 1:
+                print(f"Last 200 timestamp: {ts_sec}")
         except ValueError:
             syslog.syslog(
                 syslog.LOG_ERR,
@@ -132,7 +132,7 @@ def process_log_time(line):
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
             exit()
 
-        if debug == 1:
+        if debug > 1:
             print(ts_sec, line)
         return ts_sec
 
@@ -162,7 +162,7 @@ def restart_service():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        if debug == 1:
+        if debug > 1:
             print(result.stdout, result.stderr, result.returncode)
 
         if result.returncode == 0:
@@ -180,12 +180,13 @@ def check_for_200():
         if debug == 1:
             print(f"Found last matching line: {result}")
         last_200_time = process_log_time(result)
-        if debug == 1:
+        if debug > 1:
             print(last_200_time)
         current_time = get_current_time()
+        if debug > 1:
+            print(f"Current time: {current_time}")
         if debug == 1:
-            print(current_time)
-            print(current_time - last_200_time, ">", WINDOW_SECONDS)
+            print("Is", current_time - last_200_time, ">", WINDOW_SECONDS, "?")
         if (current_time - last_200_time) > WINDOW_SECONDS:
             syslog.syslog("Engaging {webservice} restart!")
             print(f"Engaging {webservice} restart!")
