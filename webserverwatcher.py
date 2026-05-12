@@ -186,7 +186,7 @@ def check_for_200():
         if debug > 1:
             print(f"Current time: {current_time}")
         if debug == 1:
-            print("Is", current_time - last_200_time, ">", WINDOW_SECONDS, "?")
+            print(f"Is {current_time - last_200_time:.2f} > {WINDOW_SECONDS} ?")
         if (current_time - last_200_time) > WINDOW_SECONDS:
             syslog.syslog("Engaging {webservice} restart!")
             print(f"Engaging {webservice} restart!")
