@@ -2,7 +2,7 @@
 
 Keep an eye out for successful web requests.
 
-This project is a work-in-progress (WIP), but it is close enough to working
+This project is a work-in-progress (WIP), but it works well enough
 that it is now worth sharing.
 
 This project is a partial improvement for system administrators and pairs well
