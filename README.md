@@ -29,6 +29,12 @@ Copy the configuration file.
 
 Edit the configuration file to at least point to your web server log file.
 
+(Optional) Run `webserverwatcher.py` from `tmux` or `screen` so that it does
+not stop when the SSH connection to the server is dropped. Install `tmux` or
+`screen` before doing this step.
+
+    tmux
+
 Run the program as root. Note: This script is not long. Read the thing before
 you run it in production. (I am leaving this note until the software becomes
 more polished and battle-tested.)
