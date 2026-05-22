@@ -10,6 +10,13 @@ with several of my other projects such as
 [LogReview](https://github.com/TechnologyClassroom/LogReview) and
 [FirewallBlockGen](https://github.com/TechnologyClassroom/firewallblockgen/).
 
+## Dependencies
+
+* Python 3.6+
+* sudo
+* Active public web server (apache2, nginx, caddy, etc.)
+* tmux
+
 ## Trying out WebServerWatcher
 
 WebServiceWatcher is still a work-in-progress so bear with these instructions.
