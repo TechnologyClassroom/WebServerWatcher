@@ -36,6 +36,8 @@ Copy the configuration file.
 
 Edit the configuration file to at least point to your web server log file.
 
+    editor config/webserverwatcher.ini
+
 (Optional) Run `webserverwatcher.py` from `tmux` or `screen` so that it does
 not stop when the SSH connection to the server is dropped. Install `tmux` or
 `screen` before doing this step.
