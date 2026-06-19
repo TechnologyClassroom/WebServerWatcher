@@ -2,7 +2,7 @@
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
-# WebServerWatcher v2026.05.12
+# WebServerWatcher v2026.06.19
 
 # Copyright (C) 2026 Michael McMahon
 #
@@ -27,9 +27,6 @@
 
 # The goal of this project is to be more responsive than systemd and more
 # accurate than a random pause.
-
-# Note: This currently only works with a standard apache2/nginx combined log
-# file format at this time.
 
 # In order to run, this script requires permission to restart services and view
 # log files. Run with this command:
@@ -63,8 +60,6 @@ WAIT_SECONDS = config.getfloat("time", "WAIT_SECONDS")
 webservice = config.get("systemd", "webservice")
 # Path for systemctl
 systemctl_path = config.get("systemd", "systemctl_path")
-
-# TODO Add more config options for different log file configurations.
 
 if debug == 1:
     print("Variables:")
@@ -108,8 +103,6 @@ def process_log_time(line):
     # (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
 
     # Remove the first parts (IP address and dashes) to isolate the timestamp.
-    # TODO This is brittle as some logs have different formatting. Suggest
-    # improvements please.
     parts = line.split(" ")
     # print(parts)
     if len(parts) > 1:
