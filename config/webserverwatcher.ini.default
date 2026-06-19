@@ -8,8 +8,14 @@ debug = 0
 ;logfile = test/webserverwatcher.log
 logfile = /var/log/nginx/access.log
 ;logfile = /var/log/apache2/access.log
-; Note: This currently only works with a single standard NGINX or Apache2 combined web
-; log file.
+;logfile = /var/log/syslog
+
+; This is the time field in the log file.
+; combined log would be 3.
+timefield = 3
+; combined log in syslog would be 8.
+;timefield = 8
+; Might require some trial and error to get it right.
 
 [time]
 ; Seconds since a 200 code to restart the web service.

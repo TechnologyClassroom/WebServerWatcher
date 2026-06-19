@@ -53,6 +53,8 @@ config.read("config/webserverwatcher.ini")
 debug = config.getint("general", "debug")
 # The log file will be monitored for activity
 logfile = config.get("log", "logfile")
+# The time field to compare to current time.
+timefield = config.getint("log", "timefield")
 # Seconds since a 200 code to restart the web service.
 WINDOW_SECONDS = config.getfloat("time", "WINDOW_SECONDS")
 # Seconds to wait after service restart.
@@ -111,7 +113,7 @@ def process_log_time(line):
     parts = line.split(" ")
     # print(parts)
     if len(parts) > 1:
-        timestamp_str = parts[3].split()[0].strip("[]")
+        timestamp_str = parts[timefield].split()[0].strip("[]")
         if debug == 1:
             print(timestamp_str)
         # Parse the timestamp string in seconds since epoch.
@@ -130,6 +132,7 @@ def process_log_time(line):
                 "Parsing timestamp failed. Fix datetime parsing.",
             )
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
+            print(f"Time field: {timefield}")
             exit()
 
         if debug > 1:
