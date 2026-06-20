@@ -126,7 +126,6 @@ def process_log_time(line):
             )
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
             print(f"Time field: {timefield}")
-            exit()
 
         if debug > 1:
             print(ts_sec, line)
