@@ -54,10 +54,9 @@ more polished and battle-tested.)
 
 Concept: A reasonably popular, public-facing web server should have a constant
 stream of traffic due to the high volume of bots on the modern web. Of all of
-the automated traffic, some bots should be programmed well enough to make
-successful web requests several times a second. If your server is reasonably
-popular and not returning 2xx codes after a period of a few seconds, I propose
-that something is wrong.
+the automated and human traffic, the server should receive at least several
+requests each second. If your server is reasonably popular and not returning
+2xx codes after a period of a few seconds, I propose that something is wrong.
 
 There are methods that handle this problem already, but I have not seen any
 that handle this problem as fast as this script does. Make an issue if you have
