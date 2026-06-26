@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
@@ -35,15 +35,29 @@
 # This only uses standard python libraries so in hopes of living off the land.
 # Import libraries
 from datetime import datetime
-import re
+import os
 import subprocess
+import sys
 import syslog
 import time
 import configparser
 
-# Configuration
+# Configuration.  Path may be given as argv[1] or $WEBSERVERWATCHER_CONFIG;
+# otherwise default to the config beside this script (not the CWD).
+default_config = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "config", "webserverwatcher.ini"
+)
+config_path = (
+    sys.argv[1] if len(sys.argv) > 1
+    else os.environ.get("WEBSERVERWATCHER_CONFIG", default_config)
+)
 config = configparser.ConfigParser()
-config.read("config/webserverwatcher.ini")
+if not config.read(config_path):
+    syslog.syslog(syslog.LOG_ERR, f"Config file not found: {config_path}")
+    print(f"Error: config file not found at {config_path}")
+    print("Copy config/webserverwatcher.ini.default to "
+          "config/webserverwatcher.ini and edit it.")
+    sys.exit(1)
 
 # Access values
 # Enable/disable verbose debugging
@@ -69,6 +83,19 @@ if debug == 1:
     print(f"systemctl: {systemctl_path}")
 
 
+def get_status(line):
+    """Return the HTTP status code from a combined/common log line.
+
+    The status is the first token after the closing quote of the request,
+    e.g. ... "GET / HTTP/1.1" 200 9575 ...  Returns None if absent.
+    """
+    parts = line.split('"')
+    if len(parts) < 3:
+        return None
+    after = parts[2].split()
+    return after[0] if after else None
+
+
 def read_last_matching_line(filepath):
     try:
         # Read file line by line to handle line breaks correctly
@@ -79,9 +106,9 @@ def read_last_matching_line(filepath):
         for i in range(len(lines) - 1, -1, -1):
             line = lines[i].strip()
 
-            # Regular expression looks for a 200 surrounded by spaces with
-            # anything before or after that.
-            if re.search(r"^.* 200 .*$", line):
+            # Match on the parsed status field, not a bare " 200 " anywhere
+            # in the line (which also hits byte counts, URLs and UAs).
+            if get_status(line) == "200":
                 return line.strip()
 
         # If no match is found, return None.
@@ -126,8 +153,9 @@ def process_log_time(line):
             )
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
             print(f"Time field: {timefield}")
-            # Hack to keep allow a process to continue through error.
-            ts_sec = time.time()
+            # Cannot trust the time; skip this cycle rather than reporting
+            # "now" (which made a mis-set timefield never trigger a restart).
+            return None
 
         if debug > 1:
             print(ts_sec, line)
@@ -164,9 +192,15 @@ def restart_service():
 
         if result.returncode == 0:
             print("Service restarted successfully.")
+        else:
+            err = result.stderr.decode(errors="replace").strip()
+            syslog.syslog(
+                syslog.LOG_ERR,
+                f"Restart of {webservice} failed "
+                f"(exit {result.returncode}): {err}",
+            )
+            print(f"Error restarting service: {err}")
 
-    except subprocess.CalledProcessError as e:
-        print(f"Error restarting service: {e.stderr.decode()}")
     except FileNotFoundError:
         print("systemctl not found. Make sure systemd is installed.")
 
@@ -177,6 +211,8 @@ def check_for_200():
         if debug == 1:
             print(f"Found last matching line: {result}")
         last_200_time = process_log_time(result)
+        if last_200_time is None:
+            return
         if debug > 1:
             print(last_200_time)
         current_time = get_current_time()
@@ -185,7 +221,7 @@ def check_for_200():
         if debug == 1:
             print(f"Is {current_time - last_200_time:.2f} > {WINDOW_SECONDS} ?")
         if (current_time - last_200_time) > WINDOW_SECONDS:
-            syslog.syslog("Engaging {webservice} restart!")
+            syslog.syslog(syslog.LOG_ERR, f"Engaging {webservice} restart!")
             print(f"Engaging {webservice} restart!")
             restart_service()
 
@@ -196,7 +232,7 @@ def check_for_200():
 
 
 def main():
-    syslog.syslog("Process started.")
+    syslog.syslog(syslog.LOG_INFO, "Process started.")
 
     while True:
         check_for_200()
