@@ -2,7 +2,7 @@
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
-# WebServerWatcher v2026.06.19
+# WebServerWatcher v2026.06.26b
 
 # Copyright (C) 2026 Michael McMahon
 #
@@ -53,7 +53,8 @@ config_path = (
 )
 config = configparser.ConfigParser()
 if not config.read(config_path):
-    syslog.syslog(syslog.LOG_ERR, f"Config file not found: {config_path}")
+    if debug > 0:
+        syslog.syslog(syslog.LOG_ERR, f"Config file not found: {config_path}")
     print(f"Error: config file not found at {config_path}")
     print("Copy config/webserverwatcher.ini.default to "
           "config/webserverwatcher.ini and edit it.")
@@ -75,7 +76,7 @@ webservice = config.get("systemd", "webservice")
 # Path for systemctl
 systemctl_path = config.get("systemd", "systemctl_path")
 
-if debug == 1:
+if debug == 2:
     print("Variables:")
     print(f"logfile: {logfile}")
     print(f"Time: {WINDOW_SECONDS}:{WAIT_SECONDS}")
@@ -115,7 +116,8 @@ def read_last_matching_line(filepath):
         return None
 
     except FileNotFoundError:
-        syslog.syslog(syslog.LOG_ERR, f"Log file not found: {filepath}")
+        if debug > 0:
+            syslog.syslog(syslog.LOG_ERR, f"Log file not found: {filepath}")
         print(f"Error: File not found at {filepath}")
 
 
@@ -134,30 +136,31 @@ def process_log_time(line):
     # print(parts)
     if len(parts) > 1:
         timestamp_str = parts[timefield].split()[0].strip("[]")
-        if debug == 1:
+        if debug > 1:
             print(timestamp_str)
         # Parse the timestamp string in seconds since epoch.
         # Format: DD/Mon/YY:HH:MM:SS
         #         03/Apr/2026:16:44:19
         try:
             dt = datetime.strptime(timestamp_str, "%d/%b/%Y:%H:%M:%S")
-            if debug > 1:
+            if debug > 2:
                 print(f"Last 200 time: {dt}")
             ts_sec = dt.timestamp()
-            if debug > 1:
+            if debug > 2:
                 print(f"Last 200 timestamp: {ts_sec}")
         except ValueError:
-            syslog.syslog(
-                syslog.LOG_ERR,
-                "Parsing timestamp failed. Fix datetime parsing.",
-            )
+            if debug > 0:
+                syslog.syslog(
+                    syslog.LOG_ERR,
+                    "Parsing timestamp failed. Fix datetime parsing.",
+                )
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
             print(f"Time field: {timefield}")
             # Cannot trust the time; skip this cycle rather than reporting
             # "now" (which made a mis-set timefield never trigger a restart).
             return None
 
-        if debug > 1:
+        if debug > 2:
             print(ts_sec, line)
         return ts_sec
 
@@ -171,10 +174,11 @@ def restart_service():
     try:
         # Run the systemctl command using subprocess.
         #   systemctl restart apache2
-        syslog.syslog(
-            syslog.LOG_ERR,
-            f"Restarting {webservice} due to 200 inactivity.",
-        )
+        if debug > 0:
+            syslog.syslog(
+                syslog.LOG_ERR,
+                f"Restarting {webservice} due to 200 inactivity.",
+            )
         print(f"Restarting {webservice} due to 200 inactivity.")
         # TODO Add dry-run mode.
         # print(f"/bin/echo {systemctl_path} restart {webservice}")
@@ -187,18 +191,19 @@ def restart_service():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
-        if debug > 1:
+        if debug > 2:
             print(result.stdout, result.stderr, result.returncode)
 
         if result.returncode == 0:
             print("Service restarted successfully.")
         else:
             err = result.stderr.decode(errors="replace").strip()
-            syslog.syslog(
-                syslog.LOG_ERR,
-                f"Restart of {webservice} failed "
-                f"(exit {result.returncode}): {err}",
-            )
+            if debug > 0:
+                syslog.syslog(
+                    syslog.LOG_ERR,
+                    f"Restart of {webservice} failed "
+                    f"(exit {result.returncode}): {err}",
+                )
             print(f"Error restarting service: {err}")
 
     except FileNotFoundError:
@@ -208,36 +213,38 @@ def restart_service():
 def check_for_200():
     result = read_last_matching_line(logfile)
     if result:
-        if debug == 1:
+        if debug > 1:
             print(f"Found last matching line: {result}")
         last_200_time = process_log_time(result)
         if last_200_time is None:
             return
-        if debug > 1:
+        if debug > 2:
             print(last_200_time)
         current_time = get_current_time()
-        if debug > 1:
+        if debug > 2:
             print(f"Current time: {current_time}")
-        if debug == 1:
+        if debug > 1:
             print(f"Is {current_time - last_200_time:.2f} > {WINDOW_SECONDS} ?")
         if (current_time - last_200_time) > WINDOW_SECONDS:
-            syslog.syslog(syslog.LOG_ERR, f"Engaging {webservice} restart!")
+            if debug > 0:
+                syslog.syslog(syslog.LOG_ERR, f"Engaging {webservice} restart!")
             print(f"Engaging {webservice} restart!")
             restart_service()
 
     else:
-        if debug == 1:
+        if debug > 1:
             print("No match found.")
             print("The logs might have just rotated.")
 
 
 def main():
-    syslog.syslog(syslog.LOG_INFO, "Process started.")
+    if debug > 0:
+        syslog.syslog(syslog.LOG_INFO, "Process started.")
 
     while True:
         check_for_200()
 
-        if debug == 1:
+        if debug > 1:
             print(f"Waiting for {WAIT_SECONDS} seconds...")
         # Wait for the approximate time for new 200 codes to come in.
         time.sleep(WAIT_SECONDS)
