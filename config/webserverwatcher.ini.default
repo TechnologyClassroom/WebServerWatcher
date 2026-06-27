@@ -2,6 +2,11 @@
 
 [general]
 debug = 0
+; Debug levels
+; 0 = Prints basic notifications without logs.
+; 1 = Prints basic notifications with logs.
+; 2 = Prints verbose notifications with logs.
+; 3 = Prints all debugging notifications with logs.
 
 [log]
 ; This is the log file will be monitored for activity.
