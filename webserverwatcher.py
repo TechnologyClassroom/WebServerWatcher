@@ -156,8 +156,6 @@ def process_log_time(line):
                 )
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
             print(f"Time field: {timefield}")
-            # Cannot trust the time; skip this cycle rather than reporting
-            # "now" (which made a mis-set timefield never trigger a restart).
             return None
 
         if debug > 2:
