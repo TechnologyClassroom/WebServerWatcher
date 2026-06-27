@@ -2,7 +2,7 @@
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
-# WebServerWatcher v2026.06.26b
+# WebServerWatcher v2026.06.26
 
 # Copyright (C) 2026 Michael McMahon
 #
