@@ -2,7 +2,7 @@
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
-# WebServerWatcher v2026.06.26
+# WebServerWatcher v2026.06.29
 
 # Copyright (C) 2026 Michael McMahon
 #
@@ -109,7 +109,9 @@ def read_last_matching_line(filepath):
 
             # Match on the parsed status field, not a bare " 200 " anywhere
             # in the line (which also hits byte counts, URLs and UAs).
-            if get_status(line) == "200":
+            #if get_status(line) == "200":
+            # This format allows you to add serveral valid HTTP status codes.
+            if get_status(line) in ("200", "503"):
                 return line.strip()
 
         # If no match is found, return None.
