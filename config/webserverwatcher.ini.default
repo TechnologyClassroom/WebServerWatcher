@@ -18,8 +18,9 @@ logfile = /var/log/nginx/access.log
 ; This is the time field in the log file.
 ; combined log would be 3.
 timefield = 3
-; combined log in syslog would be 8.
+; combined log in syslog might be 8 or 9.
 ;timefield = 8
+;timefield = 9
 ; Might require some trial and error to get it right.
 
 [time]

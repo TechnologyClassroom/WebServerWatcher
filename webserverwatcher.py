@@ -2,7 +2,7 @@
 """WebServerWatcher monitors web server logs for successful 200 codes."""
 
 # webserverwatcher.py
-# WebServerWatcher v2026.06.29
+# WebServerWatcher v2026.07.02
 
 # Copyright (C) 2026 Michael McMahon
 #
@@ -157,7 +157,7 @@ def process_log_time(line):
                     "Parsing timestamp failed. Fix datetime parsing.",
                 )
             print("Error: Parsing timestamp failed. Fix datetime parsing.")
-            print(f"Time field: {timefield}")
+            print(f"Time field: {timestamp_str}")
             return None
 
         if debug > 2:
