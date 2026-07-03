@@ -25,16 +25,17 @@ timefield = 3
 
 [time]
 ; Seconds since a 200 code to restart the web service.
-WINDOW_SECONDS = 4
+WINDOW_SECONDS = 12
 
 ; Seconds to wait after restart.
-WAIT_SECONDS = 5
+WAIT_SECONDS = 10
 
 [systemd]
 ; Enter the service that needs to be restarted when the 200 window is not met.
 ;   systemctl restart <webservice>
-webservice = nginx
 ;webservice = apache2
+webservice = nginx
+;webservice = caddy
 
 ; Enter the path for systemctl.
 systemctl_path = /bin/systemctl
