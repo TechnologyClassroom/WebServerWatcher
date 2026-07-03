@@ -14,13 +14,13 @@ with several of my other projects such as
 
 * Python 3.6+
 * sudo
-* Active public web server (apache2, nginx, caddy, etc.)
+* Active public web server (Apache2, NGINX, Caddy, etc.)
 * tmux
 
 ## Trying out WebServerWatcher
 
-WebServiceWatcher is still a work-in-progress so bear with these instructions.
-Contributions are welcome.
+WebServiceWatcher is still a work-in-progress (WIP) so bear with these
+instructions. Contributions are welcome.
 
 Clone the repository.
 
@@ -38,15 +38,19 @@ Edit the configuration file to at least point to your web server log file.
 
     editor config/webserverwatcher.ini
 
+If your server is not very active or you have limited bot activity, you may
+need to increase the `WINDOW_SECONDS` and `WAIT_SECONDS` values in the config
+file for WebServerWatcher to work correctly.
+
 (Optional) Run `webserverwatcher.py` from `tmux` or `screen` so that it does
 not stop when the SSH connection to the server is dropped. Install `tmux` or
 `screen` before doing this step.
 
     tmux
 
-Run the program as root. Note: This script is not long. Read the thing before
-you run it in production. (I am leaving this note until the software becomes
-more polished and battle-tested.)
+Run the program as root. Note: This script is not long. Read the short script
+before you run it in production. (I am leaving this note until the software
+becomes more polished and battle-tested.)
 
     sudo python3 webserverwatcher.py
 
@@ -64,7 +68,7 @@ a faster method.
 
 ### Method 1: SystemD
 
-When a web server like apache2 crashes, the systemd service can start it back
+When a web server like Apache2 crashes, the systemd service can start it back
 up again. The SystemD method is slower than the WebServiceWatcher method
 because there is a period of time where the web server service is still alive
 and failing to return successful requests. The SystemD method usually takes
@@ -83,7 +87,8 @@ build a pattern over time. The uptime check method usually takes minutes.
 ### Method 3: Bash loop
 
 If a sysadmin knows that something is wrong with a server, they can continually
-kick it back to life with a hacky bash loop in a `tmux` session like this:
+kick it back to life with manual service restart commands or a hacky bash loop
+in a `tmux` session like this:
 
 `while true; do systemctl restart apache2; sleep 40; date; done`
 
@@ -91,9 +96,9 @@ This hacky method technically will keep the server somewhat alive until a
 proper solution can be found. The downside to this is that there will be some
 downtime at least while the service restarts even if the problem has gone away.
 
-The WebServiceWatcher method is more responsive because the load might
-externally rise or drop and a manually set time span does not account for what
-is actually happening on the server.
+The WebServiceWatcher method is more accurate and responsive because the load
+might externally rise or drop and a manually set time span does not account for
+what is actually happening on the server.
 
 ## License
 
