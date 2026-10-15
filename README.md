@@ -2,8 +2,8 @@
 
 Keep an eye out for successful web requests.
 
-This project is a work-in-progress (WIP), but it works well enough
-that it is now worth sharing.
+This project is a work-in-progress (WIP), but it works well enough in
+production that it is worth sharing. Patches welcome!
 
 This project is a partial improvement for system administrators and pairs well
 with several of my other projects such as
@@ -94,7 +94,8 @@ in a `tmux` session like this:
 
 This hacky method technically will keep the server somewhat alive until a
 proper solution can be found. The downside to this is that there will be some
-downtime at least while the service restarts even if the problem has gone away.
+additional downtime at least while the service restarts even if the problem has
+gone away.
 
 The WebServiceWatcher method is more accurate and responsive because the load
 might externally rise or drop and a manually set time span does not account for
