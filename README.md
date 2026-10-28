@@ -12,9 +12,10 @@ with several of my other projects such as
 
 ## Dependencies
 
-* Python 3.6+
+* Python 3.0+
 * sudo
-* Active public web server (Apache2, NGINX, Caddy, etc.)
+* Active public web server (Apache2, NGINX, Caddy, etc.) logging with combined
+  log format
 * tmux
 
 ## Trying out WebServerWatcher
